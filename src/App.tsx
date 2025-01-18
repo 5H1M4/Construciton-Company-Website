@@ -2,6 +2,54 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Globe, ChevronRight, ArrowRight } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import LoadingScreen from './components/LoadingScreen';
+import axios from "axios";
+
+const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
+  console.log("handleSubmit triggered");
+
+  const formData = new FormData(event.target as HTMLFormElement);
+  console.log("Form data extracted:", formData);
+
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const message = formData.get("message") as string;
+
+  console.log("Extracted values from form:");
+  console.log("Name:", name);
+  console.log("Email:", email);
+  console.log("Message:", message);
+
+  try {
+    console.log("Sending POST request to the server...");
+    const response = await axios.post("http://localhost:5000/send-email", {
+      name,
+      email,
+      message,
+    });
+
+    console.log("Server response received:");
+    console.log("Status:", response.status);
+    console.log("Data:", response.data);
+
+    if (response.status === 200) {
+      alert("Your message has been sent!");
+    } else {
+      console.error("Unexpected response status:", response.status);
+      alert("Failed to send your message.");
+    }
+  } catch (error) {
+    console.error("Error occurred during POST request:", error);
+
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", error.response?.data);
+    } else {
+      console.error("Unknown error:", error);
+    }
+
+    alert("Failed to send your message.");
+  }
+};
 
 const stats = [
   { value: '250+', label: 'projects' },
@@ -69,15 +117,18 @@ function MainApp() {
         <nav className="fixed w-full bg-[#1b1b1b]/90 backdrop-blur-sm z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-24">
+              {/*Change starts from here*/}
               <div className="flex items-center">
-                <span 
-                  className="text-3xl font-bold text-[#c17f59] cursor-pointer" 
-                  onClick={() => scrollToSection('home')}
-                >
-                  Ballo SH.P.K
-                </span>
-              </div>
-              
+                        <img src="/Ballo shpk logo.jpg" alt="Logo" className="h-8 w-8 mr-2" />
+                        <span 
+                    className="text-3xl font-bold text-[#c17f59] cursor-pointer" 
+                          onClick={() => scrollToSection('home')}
+                                >
+                   Ballo SH.P.K
+                      </span>
+                      </div>
+
+              {/*Change ends from here*/}
               <div className="hidden md:flex items-center space-x-12">
                 {Object.entries(translations.nav).map(([key, value]) => (
                   <button 
@@ -147,7 +198,7 @@ function MainApp() {
               <p className="text-xl md:text-2xl mb-16 text-gray-300 leading-relaxed">{translations.hero.subtitle}</p>
               <button 
                 className="bg-[#c17f59] text-white px-10 py-5 font-medium hover:bg-[#a66d4b] transition-colors flex items-center group space-x-4"
-                onClick={() => scrollToSection('contact')}
+                onClick={() => scrollToSection('projects')}
               >
                 <span className="uppercase tracking-widest">{translations.hero.cta}</span>
                 <ArrowRight className="group-hover:translate-x-2 transition-transform" />
@@ -209,7 +260,7 @@ function MainApp() {
             </div>
           </div>
         </section>
-
+              
         {/* Projects Section */}
         <section id="projects" className="py-32 px-4">
           <div className="max-w-7xl mx-auto">
@@ -247,43 +298,47 @@ function MainApp() {
             </div>
           </div>
         </section>
+              {/*Change starts here*/}
+       {/* Contact Section */}
+<section id="contact" className="py-32 px-4">
+  <div className="max-w-3xl mx-auto">
+    <h2 className="text-4xl md:text-5xl font-bold text-center mb-24">{translations.contact.title}</h2>
+    <form className="space-y-10" onSubmit={handleSubmit}>
+      <div>
+        <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.name}</label>
+        <input
+          type="text"
+          name="name" // Added name attribute
+          className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
+        />
+      </div>
+      <div>
+        <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.email}</label>
+        <input
+          type="email"
+          name="email" // Added name attribute
+          className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
+        />
+      </div>
+      <div>
+        <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.message}</label>
+        <textarea
+          rows={6}
+          name="message" // Added name attribute
+          className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full bg-[#c17f59] text-white py-5 font-medium hover:bg-[#a66d4b] transition-colors uppercase tracking-widest"
+      >
+        {translations.contact.submit}
+      </button>
+    </form>
+  </div>
+</section>
 
-        {/* Contact Section */}
-        <section id="contact" className="py-32 px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold text-center mb-24">{translations.contact.title}</h2>
-            <form className="space-y-10">
-              <div>
-                <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.name}</label>
-                <input
-                  type="text"
-                  className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.email}</label>
-                <input
-                  type="email"
-                  className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.message}</label>
-                <textarea
-                  rows={6}
-                  className="w-full px-6 py-4 bg-[#252525] focus:outline-none focus:border-[#c17f59] border-b-2 border-transparent transition-colors"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-[#c17f59] text-white py-5 font-medium hover:bg-[#a66d4b] transition-colors uppercase tracking-widest"
-              >
-                {translations.contact.submit}
-              </button>
-            </form>
-          </div>
-        </section>
-
+              {/*Change ends here*/}
         {/* Footer */}
         <footer className="py-8 px-4 border-t border-[#333]">
           <div className="max-w-7xl mx-auto text-center text-sm text-gray-400">
