@@ -1,53 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, ChevronRight, ArrowRight } from 'lucide-react';
+import { Menu, X, Globe, ArrowRight } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import LoadingScreen from './components/LoadingScreen';
 import axios from "axios";
 
-// Base API URL for production and development environments
-const API_BASE_URL = process.env.NODE_ENV === "production" 
-  ? "/api"  // Handled by Vercel's routing in production
-  : "http://localhost:5000";  // Local backend for development
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "/api" 
+    : "http://localhost:5000";
 
-const handleFormSubmit = async (event: React.FormEvent) => {
+const handleSubmit = async (event: React.FormEvent) => {
   event.preventDefault();
-  console.log("handleFormSubmit triggered");
+  console.log("[FRONTEND] handleSubmit triggered");
 
-  // Get form data from the event
   const formData = new FormData(event.target as HTMLFormElement);
-
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const message = formData.get("message") as string;
 
-  // Validate required fields
-  if (!name || !email || !message) {
-    alert("All fields (name, email, message) are required.");
-    return;
-  }
+  console.log("[FRONTEND] Form data collected:", { name, email, message });
 
   try {
-    console.log("Sending POST request to the server...");
-    // Send POST request to the backend API
+    console.log(`[FRONTEND] Sending POST request to: ${API_BASE_URL}/send-email`);
+
     const response = await axios.post(`${API_BASE_URL}/send-email`, {
       name,
       email,
       message,
     });
 
-    // Handle the response
+    console.log("[FRONTEND] Server response received:", response);
+
     if (response.status === 200) {
+      console.log("[FRONTEND] Email sent successfully");
       alert("Your message has been sent successfully!");
     } else {
+      console.warn("[FRONTEND] Unexpected response status:", response.status);
       alert("Failed to send your message. Please try again.");
     }
-  } catch (error) {
-    console.error("Error occurred:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("[FRONTEND] Error occurred while sending email:", error.message);
+      console.error("[FRONTEND] Full error details:", error);
+    }
+
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("[FRONTEND] Error response data:", error.response.data);
+      console.error("[FRONTEND] Error response status:", error.response.status);
+      console.error("[FRONTEND] Error response headers:", error.response.headers);
+    }
+
     alert("Failed to send your message. Please try again later.");
   }
 };
 
-export { handleFormSubmit }; // Use a unique export name to avoid conflicts
+export { handleSubmit };
+
+
+
+
+
 const stats = [
   { value: '250+', label: 'projects' },
   { value: '180+', label: 'clients' },
@@ -90,7 +102,7 @@ function MainApp() {
     return () => clearTimeout(timer);
   }, []);
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       const navHeight = 96; // height of navbar (24 * 4 = 96px)
@@ -300,7 +312,7 @@ function MainApp() {
 <section id="contact" className="py-32 px-4">
   <div className="max-w-3xl mx-auto">
     <h2 className="text-4xl md:text-5xl font-bold text-center mb-24">{translations.contact.title}</h2>
-    <form className="space-y-10" onSubmit={handleFormSubmit}>
+    <form className="space-y-10" onSubmit={handleSubmit}>
       <div>
         <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.name}</label>
         <input
