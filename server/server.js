@@ -1,5 +1,11 @@
 const path = require('path');
-require("dotenv").config({ path: path.join(__dirname, '.env') });
+const fs = require('fs');
+const dotenvPath = path.join(__dirname, '..', '.env');
+
+console.log("Checking if .env file exists at:", dotenvPath);
+console.log("Reading .env file content:\n", fs.readFileSync(dotenvPath, 'utf8'));
+
+require("dotenv").config({ path: dotenvPath });
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -47,13 +53,23 @@ app.post("/send-email", async (req, res) => {
     console.error("[SERVER] Error sending email:", error.message);
     if (error.response) {
       console.error("[SERVER] SendGrid Error Response Status:", error.response.statusCode);
+      console.error("[SERVER] SendGrid Error Response Headers:", error.response.headers);
       console.error("[SERVER] SendGrid Error Response Body:", error.response.body);
     } else {
       console.error("[SERVER] Non-SendGrid Error:", error);
     }
+    
+    const errorDetails = {
+      message: error.message,
+      responseStatus: error.response ? error.response.statusCode : "N/A",
+      responseBody: error.response ? JSON.stringify(error.response.body) : "N/A",
+      stack: error.stack
+    };
+    console.error("[SERVER] Full error details:", JSON.stringify(errorDetails));
+    
     res.status(500).json({
       error: "Failed to send email",
-      details: error.message
+      details: errorDetails
     });
   }
 });
