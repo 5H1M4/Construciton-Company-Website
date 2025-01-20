@@ -1,8 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
-// Explicitly set the path to the .env file
-const dotenvPath = path.join(__dirname, 'server', '.env');
+// Set the path to the .env file correctly, assuming it's placed at the root level
+const dotenvPath = path.join(__dirname, '..', '.env');
 console.log("Checking if .env file exists at:", dotenvPath);
 
 try {
@@ -58,6 +58,7 @@ app.post('/send-email', async (req, res) => {
     res.status(200).send('Email sent successfully');
   } catch (error) {
     console.error('[SERVER] Error sending email:', error.message);
+
     if (error.response) {
       console.error('[SERVER] SendGrid Error Response Status:', error.response.statusCode);
       console.error('[SERVER] SendGrid Error Response Headers:', error.response.headers);
@@ -65,7 +66,7 @@ app.post('/send-email', async (req, res) => {
     } else {
       console.error('[SERVER] Non-SendGrid Error:', error);
     }
-    
+
     const errorDetails = {
       message: error.message,
       responseStatus: error.response ? error.response.statusCode : 'N/A',
@@ -73,7 +74,7 @@ app.post('/send-email', async (req, res) => {
       stack: error.stack
     };
     console.error('[SERVER] Full error details:', JSON.stringify(errorDetails));
-    
+
     res.status(500).json({
       error: 'Failed to send email',
       details: errorDetails
