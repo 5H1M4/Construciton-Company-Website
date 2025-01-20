@@ -4,53 +4,50 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import LoadingScreen from './components/LoadingScreen';
 import axios from "axios";
 
-const handleSubmit = async (event: React.FormEvent) => {
-  event.preventDefault();
-  console.log("handleSubmit triggered");
+// Base API URL for production and development environments
+const API_BASE_URL = process.env.NODE_ENV === "production" 
+  ? "/api"  // Handled by Vercel's routing in production
+  : "http://localhost:5000";  // Local backend for development
 
+const handleFormSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
+  console.log("handleFormSubmit triggered");
+
+  // Get form data from the event
   const formData = new FormData(event.target as HTMLFormElement);
-  console.log("Form data extracted:", formData);
 
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const message = formData.get("message") as string;
 
-  console.log("Extracted values from form:");
-  console.log("Name:", name);
-  console.log("Email:", email);
-  console.log("Message:", message);
+  // Validate required fields
+  if (!name || !email || !message) {
+    alert("All fields (name, email, message) are required.");
+    return;
+  }
 
   try {
     console.log("Sending POST request to the server...");
-    const response = await axios.post("http://localhost:5000/send-email", {
+    // Send POST request to the backend API
+    const response = await axios.post(`${API_BASE_URL}/send-email`, {
       name,
       email,
       message,
     });
 
-    console.log("Server response received:");
-    console.log("Status:", response.status);
-    console.log("Data:", response.data);
-
+    // Handle the response
     if (response.status === 200) {
-      alert("Your message has been sent!");
+      alert("Your message has been sent successfully!");
     } else {
-      console.error("Unexpected response status:", response.status);
-      alert("Failed to send your message.");
+      alert("Failed to send your message. Please try again.");
     }
   } catch (error) {
-    console.error("Error occurred during POST request:", error);
-
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", error.response?.data);
-    } else {
-      console.error("Unknown error:", error);
-    }
-
-    alert("Failed to send your message.");
+    console.error("Error occurred:", error);
+    alert("Failed to send your message. Please try again later.");
   }
 };
 
+export { handleFormSubmit }; // Use a unique export name to avoid conflicts
 const stats = [
   { value: '250+', label: 'projects' },
   { value: '180+', label: 'clients' },
@@ -303,7 +300,7 @@ function MainApp() {
 <section id="contact" className="py-32 px-4">
   <div className="max-w-3xl mx-auto">
     <h2 className="text-4xl md:text-5xl font-bold text-center mb-24">{translations.contact.title}</h2>
-    <form className="space-y-10" onSubmit={handleSubmit}>
+    <form className="space-y-10" onSubmit={handleFormSubmit}>
       <div>
         <label className="block mb-3 uppercase text-sm tracking-widest">{translations.contact.name}</label>
         <input
