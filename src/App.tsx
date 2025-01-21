@@ -224,20 +224,20 @@ function MainApp() {
       <img
         src="https://media.istockphoto.com/id/2164305033/photo/happy-project-manager-greeting-a-construction-worker-in-the-building.webp?a=1&b=1&s=612x612&w=0&k=20&c=pDIAp_9Gjf5-UHzRn98g4P220dXNbGW9BRFFCtJ4aUk="
         alt="About Us"
-        
         className="w-11/12 h-[416px] object-cover rounded-lg"
       />
     </div>
 
     {/* Text Section */}
     <div className="text-left">
-      <h2 className="text-4xl md:text-5xl font-bold text-[#c17f59] mb-6">Building Excellence Since 1998</h2>
+      <h2 className="text-4xl md:text-5xl font-bold text-[#c17f59] mb-6">{translations.about.title}</h2>
       <p className="text-lg md:text-xl text-gray-400 leading-relaxed">
-        With over two decades of experience, Ballo SH.P.K has established itself as a leader in construction and architectural innovation. Our commitment to quality, sustainability, and client satisfaction has earned us a reputation for excellence in the industry.
+        {translations.about.description}
       </p>
     </div>
   </div>
 </section>
+
 
 
 

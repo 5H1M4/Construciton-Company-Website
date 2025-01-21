@@ -43,4 +43,10 @@ export const en: Translation = {
     message: 'Message',
     submit: 'Send Message',
   },
+  
+  about: {
+    title: 'Building Excellence Since 1998',
+    description: 'With over two decades of experience, Ballo SH.P.K has established itself as a leader in construction and architectural innovation. Our commitment to quality, sustainability, and client satisfaction has earned us a reputation for excellence in the industry.',
+  },
+  
 }

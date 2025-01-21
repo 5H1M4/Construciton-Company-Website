@@ -43,4 +43,10 @@ export const sq: Translation = {
     message: 'Mesazhi',
     submit: 'Dërgo Mesazhin',
   },
+  
+  about: {
+    title: 'Ndërtimi i Ekselencës Që nga 1998',
+    description: 'Me mbi dy dekada përvojë, Ballo SH.P.K është vendosur si lider në ndërtim dhe inovacion arkitektonik. Përkushtimi ynë ndaj cilësisë, qëndrueshmërisë dhe kënaqësisë së klientit na ka fituar një reputacion për ekselencë në industri.',
+  },
+  
 }

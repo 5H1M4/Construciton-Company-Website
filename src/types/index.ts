@@ -31,4 +31,11 @@ export interface Translation {
     message: string;
     submit: string;
   };
+
+
+  about: {
+    title: string;
+    description: string;
+  };
+
 }
